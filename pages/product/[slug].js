@@ -1,26 +1,33 @@
-import { client, urlFor } from "@/lib/client";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   AiOutlineMinus,
   AiOutlinePlus,
   AiFillStar,
   AiOutlineStar,
 } from "react-icons/ai";
+
+import { client, urlFor } from "@/lib/client";
 import { Product } from "@/components";
+import { useStateContext } from "@/context/StateContext";
 
 const ProductDetails = ({ product, products }) => {
   const { image, name, details, price } = product;
-
   const [index, setIndex] = useState(0);
+  const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
+
+  const handleBuyNow = () => {
+    onAdd(product, qty);
+
+    setShowCart(true);
+  };
 
   return (
     <div>
-      <div className="product-details-container">
+      <div className="product-detail-container">
         <div>
           <div className="image-container">
             <img
               src={urlFor(image && image[index])}
-              alt="Product_Image"
               className="product-detail-image"
             />
           </div>
@@ -50,26 +57,32 @@ const ProductDetails = ({ product, products }) => {
             </div>
             <p>(20)</p>
           </div>
-          <h4>Details:</h4>
+          <h4>Details: </h4>
           <p>{details}</p>
           <p className="price">${price}</p>
           <div className="quantity">
             <h3>Quantity:</h3>
             <p className="quantity-desc">
-              <span className="minus" onclick="">
+              <span className="minus" onClick={decQty}>
                 <AiOutlineMinus />
               </span>
-              <span className="num" onclick="">
-                0
-              </span>
-              <span className="plus" onclick="">
+              <span className="num">{qty}</span>
+              <span className="plus" onClick={incQty}>
                 <AiOutlinePlus />
               </span>
             </p>
           </div>
           <div className="buttons">
-            <button className="add-to-cart">Add to Cart</button>
-            <button className="buy-now">Buy Now</button>
+            <button
+              type="button"
+              className="add-to-cart"
+              onClick={() => onAdd(product, qty)}
+            >
+              Add to Cart
+            </button>
+            <button type="button" className="buy-now" onClick={handleBuyNow}>
+              Buy Now
+            </button>
           </div>
         </div>
       </div>
@@ -88,45 +101,36 @@ const ProductDetails = ({ product, products }) => {
   );
 };
 
-/* 
-If a page has Dynamic Routes and uses getStaticProps, 
-it needs to define a list of paths to be statically generated.
-
-When you export a function called getStaticPaths (Static Site Generation) from a page
- that uses dynamic routes, Next.js will statically pre-render all the paths 
- specified by getStaticPaths.
-*/
 export const getStaticPaths = async () => {
-  // Query to fetch data from Sanity.io project, specifically fetching products with their slugs
-  const query = `*[_type == "product"]{
-      slug{
-        current
-      }
-    }`;
+  const query = `*[_type == "product"] {
+    slug {
+      current
+    }
+  }
+  `;
 
   const products = await client.fetch(query);
 
-  // Map over products data and create an array of objects with dynamic paths
   const paths = products.map((product) => ({
     params: {
-      slug: product.slug.current, // Set the slug as a parameter for each product
+      slug: product.slug.current,
     },
   }));
 
-  // Return an object with paths and fallback fields
   return {
-    paths, // Array of objects specifying dynamic paths
-    fallback: "blocking", // Next.js will wait for data to be fetched before serving the static page
+    paths,
+    fallback: "blocking",
   };
 };
 
 export const getStaticProps = async ({ params: { slug } }) => {
-  //[0]: This part of the query specifies that only the first matching document should be returned. Since the slug is expected to be unique, this ensures that only one document is returned.
   const query = `*[_type == "product" && slug.current == '${slug}'][0]`;
   const productsQuery = '*[_type == "product"]';
 
   const product = await client.fetch(query);
   const products = await client.fetch(productsQuery);
+
+  console.log(product);
 
   return {
     props: { products, product },
