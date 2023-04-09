@@ -123,14 +123,18 @@ export const getStaticPaths = async () => {
   };
 };
 
+/* 
+ the function is expecting an object with a params property, 
+ which is an object containing a slug property as its argument. 
+ This allows the function to access the slug value directly within 
+ its body without having to reference it as params.slug.
+*/
 export const getStaticProps = async ({ params: { slug } }) => {
   const query = `*[_type == "product" && slug.current == '${slug}'][0]`;
   const productsQuery = '*[_type == "product"]';
 
   const product = await client.fetch(query);
   const products = await client.fetch(productsQuery);
-
-  console.log(product);
 
   return {
     props: { products, product },
