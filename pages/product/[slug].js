@@ -125,7 +125,8 @@ export const getStaticPaths = async () => {
 
 /* 
  the function is expecting an object with a params property, 
- which is an object containing a slug property as its argument. 
+ destructures the params property from the object,
+ which is an object containing a slug property as its argument.  
  This allows the function to access the slug value directly within 
  its body without having to reference it as params.slug.
 */

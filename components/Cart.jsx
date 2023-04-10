@@ -70,16 +70,30 @@ const Cart = () => {
                   <div className="flex bottom">
                     <div>
                       <p className="quantity-desc">
-                        <span className="minus" onClick="">
+                        <span
+                          className="minus"
+                          onClick={() =>
+                            toggleCartItemQuantity(item._id, "dec")
+                          }
+                        >
                           <AiOutlineMinus />
                         </span>
-                        <span className="num">0</span>
-                        <span className="plus" onClick="">
+                        <span className="num">{item.quantity}</span>
+                        <span
+                          className="plus"
+                          onClick={() =>
+                            toggleCartItemQuantity(item._id, "inc")
+                          }
+                        >
                           <AiOutlinePlus />
                         </span>
                       </p>
                     </div>
-                    <button className="remove-item" type="button" onClick="">
+                    <button
+                      className="remove-item"
+                      type="button"
+                      onClick={() => onRemove(item)}
+                    >
                       <TiDeleteOutline />
                     </button>
                   </div>
@@ -87,6 +101,20 @@ const Cart = () => {
               </div>
             ))}
         </div>
+
+        {cartItems.length >= 1 && (
+          <div className="cart-bottom">
+            <div className="total">
+              <h3>Subtotal:</h3>
+              <h3>${totalPrice}</h3>
+            </div>
+            <div className="btn-container">
+              <button className="btn" type="button" onClick="">
+                Pay with Stripe
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

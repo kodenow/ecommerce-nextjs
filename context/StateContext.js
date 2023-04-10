@@ -1,3 +1,4 @@
+import { update } from "lodash";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 
@@ -43,6 +44,13 @@ export const StateContext = ({ children }) => {
     } else {
       // If the product does not exist in the cart, add it with the given quantity
       product.quantity = quantity;
+
+      /* 
+      This is the new value being set for cartItems state. 
+      It uses the spread syntax ([...]) to create a new array 
+      that includes all the existing items in cartItems (preserving their values) 
+      and adds a new item { ...product } to the end
+       */
       setCartItems([...cartItems, { ...product }]);
     }
 
@@ -50,9 +58,10 @@ export const StateContext = ({ children }) => {
   };
 
   // Function to remove a product from the cart
-  const onRemove = (product) => {
-    foundProduct = cartItems.find((item) => item._id === product._id);
-    const newCartItems = cartItems.filter((item) => item._id !== product._id);
+  const onRemove = ({ _id: productId }) => {
+    foundProduct = cartItems.find((item) => item._id === productId);
+    //If the condition is true, the item is included in the new filtered array, and if the condition is false, the item is excluded from the new array.
+    const newCartItems = cartItems.filter((item) => item._id !== productId);
 
     // Update the total price, total quantities, and cart items
     setTotalPrice(
@@ -66,26 +75,32 @@ export const StateContext = ({ children }) => {
   };
 
   // Function to toggle the quantity of a cart item (increment or decrement)
-  const toggleCartItemQuanitity = (id, value) => {
+  const toggleCartItemQuantity = (id, value) => {
     foundProduct = cartItems.find((item) => item._id === id);
     index = cartItems.findIndex((product) => product._id === id);
-    const newCartItems = cartItems.filter((item) => item._id !== id);
 
     if (value === "inc") {
       // If incrementing, update the quantity, total price, and total quantities
-      setCartItems([
-        ...newCartItems,
-        { ...foundProduct, quantity: foundProduct.quantity + 1 },
-      ]);
+      const updatedItems = cartItems.map((item) => {
+        if (item._id === id) {
+          return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      });
 
+      setCartItems(updatedItems);
       setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct.price);
       setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + 1);
     } else if (value === "dec") {
       if (foundProduct.quantity > 1) {
-        setCartItems([
-          ...newCartItems,
-          { ...foundProduct, quantity: foundProduct.quantity - 1 },
-        ]);
+        const updatedItems = cartItems.map((item) => {
+          if (item._id === id) {
+            return { ...item, quantity: item.quantity - 1 };
+          }
+          return item;
+        });
+
+        setCartItems(updatedItems);
         setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price);
         setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - 1);
       }
@@ -116,7 +131,7 @@ export const StateContext = ({ children }) => {
         incQty,
         decQty,
         onAdd,
-        toggleCartItemQuanitity,
+        toggleCartItemQuantity,
         onRemove,
         setCartItems,
         setTotalPrice,
