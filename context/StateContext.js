@@ -18,7 +18,7 @@ export const StateContext = ({ children }) => {
   let index;
 
   // Function to add a product to the cart
-  const onAdd = (product, quantity) => {
+  const onAddToCart = (product, quantity) => {
     const checkProductInCart = cartItems.find(
       (item) => item._id === product._id
     );
@@ -57,7 +57,8 @@ export const StateContext = ({ children }) => {
     toast.success(`${qty} ${product.name} added to the cart.`);
   };
 
-  // Function to remove a product from the cart
+  // Function to remove an entire product from the cart
+  // the _id property of the item object is destructured and assigned to a new variable productId
   const onRemove = ({ _id: productId }) => {
     foundProduct = cartItems.find((item) => item._id === productId);
     //If the condition is true, the item is included in the new filtered array, and if the condition is false, the item is excluded from the new array.
@@ -130,7 +131,8 @@ export const StateContext = ({ children }) => {
         qty,
         incQty,
         decQty,
-        onAdd,
+        setQty,
+        onAddToCart,
         toggleCartItemQuantity,
         onRemove,
         setCartItems,

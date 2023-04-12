@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AiOutlineMinus,
   AiOutlinePlus,
@@ -13,10 +13,20 @@ import { useStateContext } from "@/context/StateContext";
 const ProductDetails = ({ product, products }) => {
   const { image, name, details, price } = product;
   const [index, setIndex] = useState(0);
-  const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
+  const { decQty, incQty, qty, setQty, onAddToCart, setShowCart } =
+    useStateContext();
+
+  /* 
+  Reset qty to 1 when slug changes so qty value that 
+  resulted from current page incQty and decQty will not
+  be carried over when  a user navigates to a new page
+   */
+  useEffect(() => {
+    setQty(1);
+  }, [product, setQty]);
 
   const handleBuyNow = () => {
-    onAdd(product, qty);
+    onAddToCart(product, qty);
 
     setShowCart(true);
   };
@@ -76,7 +86,7 @@ const ProductDetails = ({ product, products }) => {
             <button
               type="button"
               className="add-to-cart"
-              onClick={() => onAdd(product, qty)}
+              onClick={() => onAddToCart(product, qty)}
             >
               Add to Cart
             </button>
