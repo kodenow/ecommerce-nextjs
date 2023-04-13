@@ -41,8 +41,8 @@ export default async function handler(req, res) {
           { shipping_rate: "shr_1Mw3zcIZqVHkqCK3VNDpbfM3" },
           { shipping_rate: "shr_1Mw40xIZqVHkqCK3U5m7Ts80" },
         ],
-        success_url: `${req.headers.origin}/?success=true`,
-        cancel_url: `${req.headers.origin}/?canceled=true`,
+        success_url: `${req.headers.origin}/success`,
+        cancel_url: `${req.headers.origin}/canceled`,
       };
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create(params);
