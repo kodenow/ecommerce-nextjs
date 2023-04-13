@@ -7,16 +7,18 @@ const Navbar = () => {
   const { showCart, setShowCart, totalQuantities } = useStateContext();
   return (
     <div className="navbar-container">
-      <p>
-        <Link href="/">Spectrum Headphones</Link>
-      </p>
+      <div>
+        <Link href="/">
+          <img className="kodenowlogo" src="/KodeNowLogo.png" alt="" />
+        </Link>
+      </div>
       <button
         type="button"
         className="cart-icon"
         onClick={() => setShowCart(true)}
       >
         <AiOutlineShopping />
-        <span className="cart-items-qty">{totalQuantities}</span>
+        <span className="cart-item-qty">{totalQuantities}</span>
       </button>
 
       {

@@ -28,8 +28,14 @@ a {
 .navbar-container {
   display: flex;
   justify-content: space-between;
-  margin: 6px 18px;
+  margin: 24px 18px;
   position: relative;
+}
+
+.kodenowlogo {
+  width: 135px;
+  height: 21px;
+  margin-left: 10px;
 }
 .marquee-text {
   font-size: 29px;
